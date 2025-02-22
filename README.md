@@ -30,7 +30,3 @@ script.js → Photobooth functionality
 🎨 Customization
 
 Modify style.css to change fonts, colors, or animations.
-
-📜 License
-
-This project is open-source. Feel free to modify and improve it!
