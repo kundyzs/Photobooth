@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Photobooth</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+  <div class="background"></div>
+
+  <!-- Start Page -->
+  <div id="start-page" class="page">
+    <h1 class="welcome-message">Photobooth</h1>
+    <p>Click the button below to start the photobooth</p>
+    <p>It will take 4 pictures and create a collage</p>
+    <p>Choose a border color and download the collage</p>
+    <p>Have fun!</p>
+    <button id="start" class="cssbuttons-io-button">
+      Start Photobooth
+      <span class="icon">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 4V20M20 12H4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+    </button>
+    <div class="buttons-container">
+      <p class="made-by-text">Made by Kundyz</p> <!-- Added: Made by Kundyz text -->
+      <div class="social-buttons">
+        <a href="https://www.linkedin.com/in/kundyz-serzhankyzy/" target="_blank">
+          <button class="linkedin-button">
+            <p>LinkedIn</p>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M19 0h-14c-2.76 0-5 2.24-5 5v14c0 2.76 2.24 5 5 5h14c2.76 0 5-2.24 5-5v-14c0-2.76-2.24-5-5-5zm-11 19h-3v-10h3v10zm-1.5-11.25c-.97 0-1.75-.78-1.75-1.75s.78-1.75 1.75-1.75 1.75.78 1.75 1.75-.78 1.75-1.75 1.75zm13.5 11.25h-3v-5.5c0-1.38-1.12-2.5-2.5-2.5s-2.5 1.12-2.5 2.5v5.5h-3v-10h3v1.5c.69-.69 1.61-1.5 2.5-1.5 1.93 0 3.5 1.57 3.5 3.5v6.5z"/>
+            </svg>
+          </button>
+        </a>
+        <a href="https://www.instagram.com/kundyzsr?igsh=MWxsbTV5cXh6cGE2Zw==" target="_blank">
+          <button class="follow-me-button">
+            <p>Follow me</p>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.366.062 2.633.334 3.608 1.31.975.975 1.248 2.242 1.31 3.608.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.062 1.366-.334 2.633-1.31 3.608-.975.975-2.242 1.248-3.608 1.31-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.366-.062-2.633-.334-3.608-1.31-.975-.975-1.248-2.242-1.31-3.608-.058-1.266-.07-1.646-.07-4.85s.012-3.584.07-4.85c.062-1.366.334-2.633 1.31-3.608.975-.975 2.242-1.248 3.608-1.31 1.266-.058 1.646-.07 4.85-.07zm0-2.163c-3.259 0-3.667.012-4.947.07-1.281.059-2.563.334-3.637 1.408-1.074 1.074-1.349 2.356-1.408 3.637-.058 1.28-.07 1.688-.07 4.947s.012 3.667.07 4.947c.059 1.281.334 2.563 1.408 3.637 1.074 1.074 2.356 1.349 3.637 1.408 1.28.058 1.688.07 4.947.07s3.667-.012 4.947-.07c1.281-.059 2.563-.334 3.637-1.408 1.074-1.074 1.349-2.356 1.408-3.637.058-1.28.07-1.688.07-4.947s-.012-3.667-.07-4.947c-.059-1.281-.334-2.563-1.408-3.637-1.074-1.074-2.356-1.349-3.637-1.408-1.28-.058-1.688-.07-4.947-.07z"/>
+              <path d="M12 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.162 6.162 6.162 6.162-2.759 6.162-6.162-2.759-6.162-6.162-6.162zm0 10.324c-2.296 0-4.162-1.866-4.162-4.162s1.866-4.162 4.162-4.162 4.162 1.866 4.162 4.162-1.866 4.162-4.162 4.162zm6.406-11.845c-.796 0-1.441.645-1.441 1.441s.645 1.441 1.441 1.441 1.441-.645 1.441-1.441-.645-1.441-1.441-1.441z"/>
+            </svg>
+          </button>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Camera Page -->
+  <div id="camera-page" class="page" style="display: none;">
+    <div class="camera-container">
+      <div class="camera-box">
+        <button id="start-capturing" class="styled-button">Start Capturing Photos</button>
+        <video id="video" autoplay></video>
+        <div id="countdown"></div>
+      </div>
+      <div id="taken-photos" class="taken-photos"></div> <!-- Added: Display taken photos on the right -->
+    </div>
+  </div>
+
+  <!-- Gallery Page -->
+  <div id="gallery-page" class="page" style="display: none;">
+    <h2>Your Photos</h2>
+    <div id="photo-gallery"></div>
+    <button id="back-to-start" class="styled-button">Back to Start</button>
+  </div>
+
+  <!-- Collage Page -->
+  <div id="collage-page" class="page" style="display: none;">
+    <div class="collage-layout">
+      <!-- Collage Preview -->
+      <div class="collage-preview">
+        <div id="preview"></div>
+      </div>
+
+      <!-- Border Color Choices -->
+      <div class="collage-options">
+        <div class="border-choices">
+          <h3>Choose Border Color</h3>
+          <div class="color-options">
+            <button class="color-button" data-color="mistyrose">Pink</button>
+            <button class="color-button" data-color="black">Black</button>
+            <button class="color-button" data-color="maroon">Maroon</button>
+            <button class="color-button" data-color="midnightblue">Blue</button>
+            <button class="color-button" data-color="dimgrey">Grey</button>
+            <button class="color-button" data-color="darkseagreen">Green</button>
+          </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="collage-buttons">
+          <button id="take-new-pictures" class="styled-button">
+            Take New Pictures
+          </button>
+          <button id="download-collage" class="styled-button">
+            Download
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
