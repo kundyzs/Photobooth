@@ -1,13 +1,18 @@
 📸 Photobooth
+
 A simple and interactive web-based photobooth that lets users take pictures, apply borders, and download their photo strips.
 
 🚀 Features
 Capture photos using your webcam
-Choose a border color (Pink, Black, Maroon, Blue, Grey, Green)
+
+Choose a border color (Pink, Black, Maroon)
+
 Download the photo strip
+
 Beautiful UI with gradient backgrounds and custom fonts
 
 🛠️ Installation
+
 Clone this repository:
 
 git clone https://github.com/kundyzs/Photobooth.git
