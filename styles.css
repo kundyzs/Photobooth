@@ -342,6 +342,7 @@ body {
   justify-content: center;
   gap: 10px;
   margin-top: 20px;
+  flex-wrap: wrap;
 }
 
 .filter-button {
@@ -430,6 +431,15 @@ body {
     gap: 8px;
     margin-top: 20px;
   }
+
+  .filter-buttons {
+    gap: 8px; /* Adjust gap for smaller screens */
+  }
+
+  .filter-button {
+    padding: 8px 16px; /* Adjust padding for smaller screens */
+    font-size: 12px; /* Adjust font size for smaller screens */
+  }
 }
 
 @media (max-width: 480px) {
@@ -467,5 +477,14 @@ body {
 
   .cssbuttons-io-button .icon svg {
     width: 0.9em;
+  }
+
+  .filter-buttons {
+    gap: 5px; /* Adjust gap for smaller screens */
+  }
+
+  .filter-button {
+    padding: 6px 12px; /* Adjust padding for smaller screens */
+    font-size: 10px; /* Adjust font size for smaller screens */
   }
 }
