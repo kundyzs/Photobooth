@@ -130,6 +130,7 @@ function capturePhoto() {
   const img = document.createElement('img');
   img.src = canvas.toDataURL('image/png');
   img.classList.add('photo');
+  img.style.filter = currentFilter; // Apply the filter to the preview image
 
   // Create a container for the image and apply the border
   const imgContainer = document.createElement('div');
