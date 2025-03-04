@@ -37,21 +37,23 @@
 
   <!-- Camera Page -->
   <div id="camera-page" class="page" style="display: none;">
-    <div class="camera-container">
-      <div class="camera-box">
-        <button id="start-capturing" class="styled-button">Start Capturing Photos</button>
-        <video id="video" autoplay playsinline></video>
-        <div id="countdown"></div>
+    <div class="camera-layout">
+      <div class="camera-container">
+        <div class="camera-box">
+          <button id="start-capturing" class="styled-button">Start Capturing Photos</button>
+          <video id="video" autoplay playsinline></video>
+          <div id="countdown"></div>
+        </div>
+        <div id="taken-photos" class="taken-photos"></div>
       </div>
-      <div id="taken-photos" class="taken-photos"></div>
-    </div>
-    <div class="filter-buttons">
-      <button class="filter-button" data-filter="none">None</button>
-      <button class="filter-button" data-filter="grayscale(100%)">Black & White</button>
-      <button class="filter-button" data-filter="sepia(100%)">Vintage</button>
-      <button class="filter-button" data-filter="contrast(150%)">High Contrast</button>
-      <button class="filter-button" data-filter="blur(2px)">Blur</button>
-      <button class="filter-button" data-filter="brightness(150%)">Bright</button>
+      <div class="filter-buttons">
+        <button class="filter-button" data-filter="none">None</button>
+        <button class="filter-button" data-filter="grayscale(150%)">Black & White</button>
+        <button class="filter-button" data-filter="sepia(100%)">Vintage</button>
+        <button class="filter-button" data-filter="contrast(150%)">High Contrast</button>
+        <button class="filter-button" data-filter="blur(1.5px)">Blur</button>
+        <button class="filter-button" data-filter="brightness(150%)">Bright</button>
+      </div>
     </div>
   </div>
 
@@ -68,12 +70,12 @@
         <div class="border-choices">
           <h3>Choose Border Color</h3>
           <div class="color-options">
-            <button class="color-button" data-color="mistyrose">Pink</button>
-            <button class="color-button" data-color="black">Black</button>
-            <button class="color-button" data-color="maroon">Maroon</button>
-            <button class="color-button" data-color="midnightblue">Blue</button>
-            <button class="color-button" data-color="dimgrey">Grey</button>
-            <button class="color-button" data-color="darkseagreen">Green</button>
+            <button class="color-button" style="--hover-color: mistyrose;"><span>Pink</span></button>
+            <button class="color-button" style="--hover-color: black;"><span>Black</span></button>
+            <button class="color-button" style="--hover-color: maroon;"><span>Maroon</span></button>
+            <button class="color-button" style="--hover-color: midnightblue;"><span>Blue</span></button>
+            <button class="color-button" style="--hover-color: dimgrey;"><span>Grey</span></button>
+            <button class="color-button" style="--hover-color: darkseagreen;"><span>Green</span></button>
           </div>
         </div>
 
