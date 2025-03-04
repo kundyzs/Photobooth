@@ -63,7 +63,7 @@ colorButtons.forEach(button => {
     const color = button.getAttribute('data-color');
 
     // Update the border color of all photos inside collage-preview
-    document.querySelectorAll(".collage-preview .photo").forEach(photo => {
+    document.querySelectorAll(".collage-preview .photo-container").forEach(photo => {
       photo.style.borderColor = color;
     });
   });
@@ -130,7 +130,7 @@ function capturePhoto() {
   const img = document.createElement('img');
   img.src = canvas.toDataURL('image/png');
   img.classList.add('photo');
-  img.style.filter = currentFilter; // Apply the filter to the preview image
+  img.style.filter = currentFilter; // Apply the filter to the image only
 
   // Create a container for the image and apply the border
   const imgContainer = document.createElement('div');
@@ -153,10 +153,11 @@ function updateCollagePreview() {
 
   images.forEach(container => {
     const newContainer = container.cloneNode(true);
-    newContainer.querySelector('img').style.filter = currentFilter; // Apply the filter to the image only
-    
+    const img = newContainer.querySelector('img');
+    img.style.filter = currentFilter; // Apply the filter to the image only
+
     // Ensure the image is fully loaded before appending
-    newContainer.querySelector('img').onload = () => collagePreview.appendChild(newContainer);
+    img.onload = () => collagePreview.appendChild(newContainer);
     
     collagePreview.appendChild(newContainer);
   });
