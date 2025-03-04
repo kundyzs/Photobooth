@@ -121,8 +121,12 @@ function capturePhoto() {
   img.src = canvas.toDataURL('image/png');
   img.classList.add('photo');
 
+  // Append the photo to the taken-photos div
   takenPhotosDiv.appendChild(img);
-  previewDiv.appendChild(img.cloneNode(true));
+
+  // Clone the photo and append it to the preview div
+  const clonedImg = img.cloneNode(true);
+  previewDiv.appendChild(clonedImg);
 }
 
 function updateCollagePreview() {
