@@ -13,6 +13,7 @@ const downloadCollageButton = document.getElementById('download-collage');
 let photosTaken = 0;
 let countdownInterval;
 let stream;
+let currentFilter = 'none';
 
 // Create a hidden canvas for capturing photos
 const canvas = document.createElement('canvas');
@@ -24,7 +25,9 @@ function startCamera() {
     .then(s => {
       stream = s;
       video.srcObject = stream;
-      video.play();
+      video.play().catch(err => {
+        console.error("Error playing video: ", err);
+      });
     })
     .catch(err => {
       console.error("Error accessing the camera: ", err);
@@ -66,10 +69,13 @@ colorButtons.forEach(button => {
   });
 });
 
-
-
 function startPhotobooth() {
   photosTaken = 0;
+  if (video.paused) {
+    video.play().catch(err => {
+      console.error("Error resuming video: ", err);
+    });
+  }
   takePhotos();
 }
 
@@ -117,35 +123,52 @@ function capturePhoto() {
   canvas.height = video.videoHeight;
   context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
+  // Apply the current filter to the captured image
+  context.filter = currentFilter;
+  context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
   const img = document.createElement('img');
   img.src = canvas.toDataURL('image/png');
   img.classList.add('photo');
 
-  // Append the photo to the taken-photos div
-  takenPhotosDiv.appendChild(img);
+  // Create a container for the image and apply the border
+  const imgContainer = document.createElement('div');
+  imgContainer.classList.add('photo-container');
+  imgContainer.appendChild(img);
 
-  // Clone the photo and append it to the preview div
-  const clonedImg = img.cloneNode(true);
-  previewDiv.appendChild(clonedImg);
+  // Append the container to the taken-photos div
+  takenPhotosDiv.appendChild(imgContainer);
+
+  // Clone the container and append it to the preview div
+  const clonedContainer = imgContainer.cloneNode(true);
+  previewDiv.appendChild(clonedContainer);
 }
 
 function updateCollagePreview() {
-  const images = document.querySelectorAll("#taken-photos img");
+  const images = document.querySelectorAll("#taken-photos .photo-container");
   const collagePreview = document.querySelector(".collage-preview");
 
   collagePreview.innerHTML = ""; // Clear previous images
 
-  images.forEach(img => {
-    const newImg = img.cloneNode(true);
-    newImg.classList.add("photo");
+  images.forEach(container => {
+    const newContainer = container.cloneNode(true);
+    newContainer.querySelector('img').style.filter = currentFilter; // Apply the filter to the image only
     
     // Ensure the image is fully loaded before appending
-    newImg.onload = () => collagePreview.appendChild(newImg);
+    newContainer.querySelector('img').onload = () => collagePreview.appendChild(newContainer);
     
-    collagePreview.appendChild(newImg);
+    collagePreview.appendChild(newContainer);
   });
 }
 
+const filterButtons = document.querySelectorAll('.filter-button');
+filterButtons.forEach(button => {
+  button.addEventListener('click', () => {
+    const filter = button.getAttribute('data-filter');
+    currentFilter = filter; // Store the selected filter
+    video.style.filter = filter; // Apply the filter to the video feed
+  });
+});
 
 function downloadCollage() {
   const collagePreview = document.querySelector(".collage-preview");
@@ -174,9 +197,18 @@ function downloadCollage() {
   }, 500); // Wait a bit to ensure images are loaded
 }
 
-
 function stopCamera() {
   if (stream) {
     stream.getTracks().forEach(track => track.stop());
+    video.srcObject = null; // Clear the video source
   }
 }
+
+// Handle page visibility changes
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && stream) {
+    video.play().catch(err => {
+      console.error("Error resuming video after visibility change: ", err);
+    });
+  }
+});

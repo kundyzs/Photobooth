@@ -40,10 +40,18 @@
     <div class="camera-container">
       <div class="camera-box">
         <button id="start-capturing" class="styled-button">Start Capturing Photos</button>
-        <video id="video" autoplay></video>
+        <video id="video" autoplay playsinline></video>
         <div id="countdown"></div>
       </div>
-      <div id="taken-photos" class="taken-photos"></div> <!-- Added: Display taken photos on the right -->
+      <div id="taken-photos" class="taken-photos"></div>
+    </div>
+    <div class="filter-buttons">
+      <button class="filter-button" data-filter="none">None</button>
+      <button class="filter-button" data-filter="grayscale(100%)">Black & White</button>
+      <button class="filter-button" data-filter="sepia(100%)">Vintage</button>
+      <button class="filter-button" data-filter="contrast(150%)">High Contrast</button>
+      <button class="filter-button" data-filter="blur(2px)">Blur</button>
+      <button class="filter-button" data-filter="brightness(150%)">Bright</button>
     </div>
   </div>
 
