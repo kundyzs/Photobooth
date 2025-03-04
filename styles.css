@@ -272,87 +272,67 @@ body {
   bottom: 20px;
   right: 20px;
   display: flex;
-  flex-direction: column;
   align-items: center; /* Center align items */
   gap: 10px;
 }
 
-.social-buttons {
-  display: flex;
-  gap: 10px; /* Space between buttons */
-}
-
-.linkedin-button, .follow-me-button {
-  background-color: #fff;
-  border: 1px solid;
-  padding: 5px;
-  position: relative;
-  width: 7.2em;
-  height: 2em;
-  transition: 0.5s;
-  font-size: 17px;
-  border-radius: 0.4em;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.linkedin-button {
-  border-color: #0077b5;
-  color: #0077b5;
-}
-
-.follow-me-button {
-  border-color: #bc2a8d;
-  color: #bc2a8d;
-}
-
-.linkedin-button p, .follow-me-button p {
-  position: absolute;
-  top: 0.4em;
-  left: 1.2em;
-  margin: 0;
-  padding: 0;
-  transition: 0.5s;
-}
-
-.linkedin-button svg, .follow-me-button svg {
-  position: absolute;
-  top: 0.45em;
-  right: 0.5em;
-  margin: 0;
-  padding: 0;
-  opacity: 0;
-  transition: 0.5s;
-  height: 1em;
-  fill: #fff;
-}
-
-.linkedin-button:hover p, .follow-me-button:hover p {
-  left: 0.6em;
-  color: #fff;
-}
-
-.linkedin-button:hover svg, .follow-me-button:hover svg {
-  opacity: 1;
-}
-
-.linkedin-button:hover {
-  background-color: #0077b5;
-  color: #fff;
-}
-
-.follow-me-button:hover {
-  background-color: #bc2a8d;
-  color: #fff;
-}
-
 .made-by-text {
   font-family: "Poppins", sans-serif; /* Match the font family */
-  font-size: 12px; /* Adjust the font size */
+  font-size: 15px; /* Adjust the font size */
   font-weight: 600; /* Match the font weight */
   color: #4A148C; /* Match the color */
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Match the text shadow */
-  margin-bottom: 10px; /* Add margin bottom to separate from buttons */
+  margin: 0; /* Add margin bottom to separate from buttons */
+}
+
+.portfolio-button {
+  outline: none;
+  cursor: pointer;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+  position: relative;
+  display: inline-block;
+  letter-spacing: 0.05rem;
+  font-weight: 700;
+  font-size: 17px;
+  border-radius: 500px;
+  overflow: hidden;
+  background: hsl(261deg 80% 48%);
+  color: ghostwhite;
+}
+
+.portfolio-button span {
+  position: relative;
+  z-index: 10;
+  transition: color 0.4s;
+}
+
+.portfolio-button:hover span {
+  color: white;
+}
+
+.portfolio-button::before,
+.portfolio-button::after {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.portfolio-button::before {
+  content: "";
+  background: #000;
+  width: 120%;
+  left: -10%;
+  transform: skew(30deg);
+  transition: transform 0.4s cubic-bezier(0.3, 1, 0.8, 1);
+}
+
+.portfolio-button:hover::before {
+  transform: translate3d(100%, 0, 0);
 }
