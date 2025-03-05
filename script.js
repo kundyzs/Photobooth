@@ -182,38 +182,9 @@ function downloadCollage() {
 
   console.log("Starting collage download...");
 
-  // Ensure all images are fully loaded before capturing
-  const images = collagePreview.querySelectorAll('img');
-  const promises = Array.from(images).map(img => {
-    return new Promise((resolve, reject) => {
-      if (img.complete) {
-        resolve();
-      } else {
-        img.onload = resolve;
-        img.onerror = reject;
-      }
-    });
-  });
-
-  Promise.all(promises)
-    .then(() => {
-      console.log("All images loaded, capturing collage...");
-
-      // Use rasterizeHTML to render the collage preview
-      return rasterizeHTML.drawHTML(collagePreview.innerHTML, {
-        width: collagePreview.scrollWidth,
-        height: collagePreview.scrollHeight,
-        style: {
-          transform: 'scale(1)',
-          transformOrigin: 'top left',
-        },
-      });
-    })
-    .then(renderResult => {
-      const canvas = renderResult.image;
-
-      // Convert the canvas to a Blob and trigger the download
-      canvas.toBlob(blob => {
+  setTimeout(() => {
+    domtoimage.toBlob(collagePreview)
+      .then(blob => {
         console.log("Image created successfully.");
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
@@ -222,16 +193,14 @@ function downloadCollage() {
         link.click();
         document.body.removeChild(link);
         console.log("Collage downloaded successfully.");
+      })
+      .catch(error => {
+        console.error("Error capturing collage:", error);
       });
-    })
-    .catch(error => {
-      console.error("Error capturing collage:", error);
-    });
+  }, 500); // Wait a bit to ensure images are loaded
 }
 
-  downloadCollageButton.addEventListener('click', () => {
-    downloadCollage();
-  });
+document.getElementById('download-collage').addEventListener('click', downloadCollage);
 
 function stopCamera() {
   if (stream) {
