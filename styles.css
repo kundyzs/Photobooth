@@ -131,9 +131,9 @@ body {
 .collage-preview .photo-container {
   width: 250px; /* Adjust as needed */
   height: 185px; /* Adjust as needed */
-  border: 10px solid mistyrose; /* Default border color */
+  border: 6px solid mistyrose; /* Default border color */
   display: inline-block; /* Ensure the container wraps the image */
-  margin: 2px; /* Add some spacing between images */
+  margin: 1px; /* Add some spacing between images */
   background-color: white; /* Ensure the border area is not transparent */
   overflow: hidden; /* Prevent any overflow */
   position: relative; /* Ensure proper positioning */
