@@ -63,7 +63,7 @@ colorButtons.forEach(button => {
     const color = button.getAttribute('data-color');
 
     // Update the border color of all photos inside collage-preview
-    document.querySelectorAll(".collage-preview .photo-container").forEach(photo => {
+    document.querySelectorAll(".collage-preview .photo").forEach(photo => {
       photo.style.borderColor = color;
     });
   });
@@ -130,7 +130,7 @@ function capturePhoto() {
   const img = document.createElement('img');
   img.src = canvas.toDataURL('image/png');
   img.classList.add('photo');
-  img.style.filter = currentFilter; // Apply the filter to the image only
+  img.style.filter = currentFilter; // Apply the filter to the preview image
 
   // Create a container for the image and apply the border
   const imgContainer = document.createElement('div');
@@ -153,11 +153,10 @@ function updateCollagePreview() {
 
   images.forEach(container => {
     const newContainer = container.cloneNode(true);
-    const img = newContainer.querySelector('img');
-    img.style.filter = currentFilter; // Apply the filter to the image only
-
+    newContainer.querySelector('img').style.filter = currentFilter; // Apply the filter to the image only
+    
     // Ensure the image is fully loaded before appending
-    img.onload = () => collagePreview.appendChild(newContainer);
+    newContainer.querySelector('img').onload = () => collagePreview.appendChild(newContainer);
     
     collagePreview.appendChild(newContainer);
   });
@@ -180,27 +179,24 @@ function downloadCollage() {
     return;
   }
 
-  console.log("Starting collage download...");
-
   setTimeout(() => {
-    domtoimage.toBlob(collagePreview)
-      .then(blob => {
-        console.log("Image created successfully.");
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = 'photobooth-collage.png';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        console.log("Collage downloaded successfully.");
-      })
-      .catch(error => {
-        console.error("Error capturing collage:", error);
-      });
+    html2canvas(collagePreview, {
+      useCORS: true, // Ensures cross-origin images are handled correctly
+      allowTaint: true, // Allows tainted images to be drawn
+      scale: window.devicePixelRatio || 1, // Ensures high-quality capture
+      backgroundColor: null // Transparent background
+    }).then(canvas => {
+      const link = document.createElement('a');
+      link.href = canvas.toDataURL('image/png');
+      link.download = 'photobooth-collage.png';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }).catch(error => {
+      console.error("Error capturing collage:", error);
+    });
   }, 500); // Wait a bit to ensure images are loaded
 }
-
-document.getElementById('download-collage').addEventListener('click', downloadCollage);
 
 function stopCamera() {
   if (stream) {
