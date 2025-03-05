@@ -200,6 +200,10 @@ function downloadCollage() {
     }, 500); // Wait a bit to ensure images are loaded
   }
 
+  downloadCollageButton.addEventListener('click', () => {
+    downloadCollage();
+  });
+  
 function stopCamera() {
   if (stream) {
     stream.getTracks().forEach(track => track.stop());
