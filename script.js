@@ -173,31 +173,32 @@ filterButtons.forEach(button => {
 });
 
 function downloadCollage() {
-  const collagePreview = document.querySelector(".collage-preview");
-
-  if (!collagePreview || collagePreview.innerHTML.trim() === "") {
-    console.error("Collage preview is empty or not loaded.");
-    return;
+    const collagePreview = document.querySelector(".collage-preview");
+  
+    if (!collagePreview || collagePreview.innerHTML.trim() === "") {
+      console.error("Collage preview is empty or not loaded.");
+      return;
+    }
+  
+    console.log("Starting collage download...");
+  
+    setTimeout(() => {
+      domtoimage.toBlob(collagePreview)
+        .then(blob => {
+          console.log("Image created successfully.");
+          const link = document.createElement('a');
+          link.href = URL.createObjectURL(blob);
+          link.download = 'photobooth-collage.png';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          console.log("Collage downloaded successfully.");
+        })
+        .catch(error => {
+          console.error("Error capturing collage:", error);
+        });
+    }, 500); // Wait a bit to ensure images are loaded
   }
-
-  setTimeout(() => {
-    html2canvas(collagePreview, {
-      useCORS: true, // Ensures cross-origin images are handled correctly
-      allowTaint: true, // Allows tainted images to be drawn
-      scale: window.devicePixelRatio || 1, // Ensures high-quality capture
-      backgroundColor: null // Transparent background
-    }).then(canvas => {
-      const link = document.createElement('a');
-      link.href = canvas.toDataURL('image/png');
-      link.download = 'photobooth-collage.png';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }).catch(error => {
-      console.error("Error capturing collage:", error);
-    });
-  }, 500); // Wait a bit to ensure images are loaded
-}
 
 function stopCamera() {
   if (stream) {

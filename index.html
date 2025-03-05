@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Photobooth</title>
   <link rel="stylesheet" href="styles.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
 </head>
 <body>
   <div class="background"></div>
@@ -14,7 +14,7 @@
   <div id="start-page" class="page">
     <h1 class="welcome-message">Photobooth</h1>
     <p>Click the button below to start the photobooth</p>
-    <p>It will take 4 pictures and create a collage with a filter of your choice</p>
+    <p>It will take 4 pictures and create a collage</p>
     <p>Choose a border color and download the collage</p>
     <p>Don't worry, your pictures are not saved anywhere except your device</p>
     <p>Have fun!</p>
@@ -49,13 +49,13 @@
       </div>
       <div class="filter-buttons">
         <button class="filter-button" data-filter="none">None</button>
-        <button class="filter-button" data-filter="grayscale(150%)">Black & White</button>
+        <button class="filter-button" data-filter="grayscale(100%)">Black & White</button>
         <button class="filter-button" data-filter="sepia(100%)">Vintage</button>
         <button class="filter-button" data-filter="contrast(150%)">High Contrast</button>
-        <button class="filter-button" data-filter="blur(1.5px)">Blur</button>
+        <button class="filter-button" data-filter="blur(2px)">Blur</button>
         <button class="filter-button" data-filter="brightness(150%)">Bright</button>
       </div>
-    </div>
+  </div>
   </div>
 
   <!-- Collage Page -->
