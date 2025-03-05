@@ -179,23 +179,18 @@ function downloadCollage() {
     return;
   }
 
-  setTimeout(() => {
-    html2canvas(collagePreview, {
-      useCORS: true, // Ensures cross-origin images are handled correctly
-      allowTaint: true, // Allows tainted images to be drawn
-      scale: window.devicePixelRatio || 1, // Ensures high-quality capture
-      backgroundColor: null // Transparent background
-    }).then(canvas => {
+  domtoimage.toPng(collagePreview)
+    .then(function (dataUrl) {
       const link = document.createElement('a');
-      link.href = canvas.toDataURL('image/png');
+      link.href = dataUrl;
       link.download = 'photobooth-collage.png';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-    }).catch(error => {
-      console.error("Error capturing collage:", error);
+    })
+    .catch(function (error) {
+      console.error('Error capturing collage:', error);
     });
-  }, 500); // Wait a bit to ensure images are loaded
 }
 
 function stopCamera() {
