@@ -52,10 +52,8 @@ takeNewPicturesButton.addEventListener('click', () => {
   startCamera();
 });
 
-// Download collage
-downloadCollageButton.addEventListener('click', () => {
-  downloadCollage();
-});
+downloadCollageButton.addEventListener('click', downloadCollage);
+downloadCollageButton.addEventListener('touchstart', downloadCollage);
 
 // Border color selection 
 colorButtons.forEach(button => {
@@ -121,28 +119,27 @@ function takePhotos() {
 function capturePhoto() {
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
-  context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-  // Apply the current filter to the captured image
   context.filter = currentFilter;
+  
+  // Ensure video frame is drawn before capturing
   context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-  const img = document.createElement('img');
-  img.src = canvas.toDataURL('image/png');
-  img.classList.add('photo');
-  img.style.filter = currentFilter; // Apply the filter to the preview image
+  setTimeout(() => { // Small delay to ensure canvas has drawn the image
+    const img = document.createElement('img');
+    img.src = canvas.toDataURL('image/png');
+    img.classList.add('photo');
+    img.style.filter = currentFilter; 
 
-  // Create a container for the image and apply the border
-  const imgContainer = document.createElement('div');
-  imgContainer.classList.add('photo-container');
-  imgContainer.appendChild(img);
+    const imgContainer = document.createElement('div');
+    imgContainer.classList.add('photo-container');
+    imgContainer.appendChild(img);
 
-  // Append the container to the taken-photos div
-  takenPhotosDiv.appendChild(imgContainer);
+    takenPhotosDiv.appendChild(imgContainer);
 
-  // Clone the container and append it to the preview div
-  const clonedContainer = imgContainer.cloneNode(true);
-  previewDiv.appendChild(clonedContainer);
+    // Clone for collage preview
+    const clonedContainer = imgContainer.cloneNode(true);
+    previewDiv.appendChild(clonedContainer);
+  }, 100); // Small delay to ensure image rendering
 }
 
 function updateCollagePreview() {
@@ -179,18 +176,20 @@ function downloadCollage() {
     return;
   }
 
-  domtoimage.toPng(collagePreview)
-    .then(function (dataUrl) {
-      const link = document.createElement('a');
-      link.href = dataUrl;
-      link.download = 'photobooth-collage.png';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    })
-    .catch(function (error) {
-      console.error('Error capturing collage:', error);
-    });
+  setTimeout(() => { // Ensure all images have loaded before capturing
+    domtoimage.toPng(collagePreview)
+      .then(function (dataUrl) {
+        const link = document.createElement('a');
+        link.href = dataUrl;
+        link.download = 'photobooth-collage.png';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      })
+      .catch(function (error) {
+        console.error('Error capturing collage:', error);
+      });
+  }, 200); // Delay to allow rendering
 }
 
 function stopCamera() {
