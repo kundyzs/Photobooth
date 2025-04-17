@@ -1,4 +1,4 @@
-📸 Photobooth
+📸 PICZIZY
 
 A simple and interactive web-based photobooth that lets users take pictures, apply borders, and download their photo strips.
 
@@ -12,7 +12,7 @@ Download the photo strip
 Beautiful UI with gradient backgrounds and custom fonts
 
 The website is deployed! Check it out!
-https://kundyzs.github.io/Photobooth/
+https://www.piczizy.com
 
 📂 Project Structure
 index.html → Main UI
