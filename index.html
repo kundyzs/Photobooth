@@ -3,28 +3,46 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Photobooth</title>
+  <title>Modern Photobooth</title>
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
   <div class="background"></div>
 
   <!-- Start Page -->
   <div id="start-page" class="page">
-    <h1 class="welcome-message">Photobooth</h1>
-    <p>Click the button below to start the photobooth</p>
-    <p>It will take 4 pictures and create a collage</p>
-    <p>Choose a border color and download the collage</p>
-    <p>Have fun!</p>
-    <button id="start" class="cssbuttons-io-button">
-      Start Photobooth
-      <span class="icon">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 4V20M20 12H4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </span>
-    </button>
+    <div class="start-content">
+      <h1 class="welcome-message">Modern Photobooth</h1>
+      <p class="subtitle">Create amazing photo collages with filters and effects</p>
+      <div class="features-list">
+        <div class="feature-item">
+          <i class="fas fa-camera"></i>
+          <span>4 High-quality photos</span>
+        </div>
+        <div class="feature-item">
+          <i class="fas fa-magic"></i>
+          <span>Real-time filters</span>
+        </div>
+        <div class="feature-item">
+          <i class="fas fa-palette"></i>
+          <span>Customizable borders</span>
+        </div>
+        <div class="feature-item">
+          <i class="fas fa-download"></i>
+          <span>Instant download</span>
+        </div>
+      </div>
+      <button id="start" class="cssbuttons-io-button">
+        Start Photobooth
+        <span class="icon">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 4V20M20 12H4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+      </button>
+    </div>
     <div class="buttons-container">
       <p class="made-by-text">Made by</p>
       <a href="https://kundyzs.github.io/My-Dev-Portfolio/" target="_blank">
@@ -40,55 +58,173 @@
     <div class="camera-layout">
       <div class="camera-container">
         <div class="camera-box">
-          <button id="start-capturing" class="styled-button">Start Capturing Photos</button>
-          <video id="video" autoplay playsinline></video>
-          <div id="countdown"></div>
+          <div class="camera-header">
+            <button id="back-to-start" class="back-button">
+              <i class="fas fa-arrow-left"></i>
+            </button>
+            <h3>Camera Ready</h3>
+            <div class="photo-counter">
+              <span id="photo-count">0</span>/4
+            </div>
+          </div>
+          <video id="video" autoplay playsinline muted></video>
+          <div id="countdown" class="countdown-overlay"></div>
+          <button id="start-capturing" class="capture-button">
+            <i class="fas fa-camera"></i>
+            Start Capturing
+          </button>
         </div>
-        <div id="taken-photos" class="taken-photos"></div>
+        <div class="photo-gallery">
+          <h4>Photos Taken</h4>
+          <div id="taken-photos" class="taken-photos"></div>
+        </div>
       </div>
-      <div class="filter-buttons">
-        <button class="filter-button" data-filter="none">None</button>
-        <button class="filter-button" data-filter="grayscale(100%)">Black & White</button>
-        <button class="filter-button" data-filter="sepia(100%)">Vintage</button>
-        <button class="filter-button" data-filter="contrast(150%)">High Contrast</button>
-        <button class="filter-button" data-filter="blur(2px)">Blur</button>
-        <button class="filter-button" data-filter="brightness(150%)">Bright</button>
+      <div class="controls-section">
+        <div class="filter-section">
+          <h4>Photo Filters</h4>
+          <div class="filter-buttons">
+            <button class="filter-button active" data-filter="none">
+              <i class="fas fa-circle"></i>
+              <span>None</span>
+            </button>
+            <button class="filter-button" data-filter="grayscale(100%)">
+              <i class="fas fa-adjust"></i>
+              <span>B&W</span>
+            </button>
+            <button class="filter-button" data-filter="sepia(100%)">
+              <i class="fas fa-image"></i>
+              <span>Vintage</span>
+            </button>
+            <button class="filter-button" data-filter="contrast(150%)">
+              <i class="fas fa-sun"></i>
+              <span>Contrast</span>
+            </button>
+            <button class="filter-button" data-filter="hue-rotate(180deg)">
+              <i class="fas fa-palette"></i>
+              <span>Color Shift</span>
+            </button>
+            <button class="filter-button" data-filter="invert(100%)">
+              <i class="fas fa-moon"></i>
+              <span>Invert</span>
+            </button>
+          </div>
+        </div>
+        <div class="effect-section">
+          <h4>Photo Effects</h4>
+          <div class="effect-buttons">
+            <button class="effect-button" data-effect="none">
+              <i class="fas fa-circle"></i>
+              <span>None</span>
+            </button>
+            <button class="effect-button" data-effect="vintage">
+              <i class="fas fa-camera-retro"></i>
+              <span>Vintage</span>
+            </button>
+            <button class="effect-button" data-effect="dramatic">
+              <i class="fas fa-theater-masks"></i>
+              <span>Dramatic</span>
+            </button>
+            <button class="effect-button" data-effect="warm">
+              <i class="fas fa-fire"></i>
+              <span>Warm</span>
+            </button>
+          </div>
+        </div>
       </div>
-  </div>
+    </div>
   </div>
 
   <!-- Collage Page -->
   <div id="collage-page" class="page" style="display: none;">
     <div class="collage-layout">
+      <div class="collage-header">
+        <button id="back-to-camera" class="back-button">
+          <i class="fas fa-arrow-left"></i>
+        </button>
+        <h2>Your Photo Collage</h2>
+        <button id="share-collage" class="share-button">
+          <i class="fas fa-share-alt"></i>
+          Share
+        </button>
+      </div>
+      
       <!-- Collage Preview -->
       <div class="collage-preview">
-        <div id="preview"></div>
+        <div id="preview" class="preview-container"></div>
       </div>
 
-      <!-- Border Color Choices -->
+      <!-- Collage Options -->
       <div class="collage-options">
         <div class="border-choices">
-          <h3>Choose Border Color</h3>
+          <h3>Border Style</h3>
           <div class="color-options">
-            <button class="color-button" data-color="mistyrose" style="--hover-color: mistyrose;"><span>Pink</span></button>
-            <button class="color-button" data-color="black" style="--hover-color: black;"><span>Black</span></button>
-            <button class="color-button" data-color="maroon" style="--hover-color: maroon;"><span>Maroon</span></button>
-            <button class="color-button" data-color="midnightblue" style="--hover-color: midnightblue;"><span>Blue</span></button>
-            <button class="color-button" data-color="dimgrey" style="--hover-color: dimgrey;"><span>Grey</span></button>
-            <button class="color-button" data-color="darkseagreen" style="--hover-color: darkseagreen;"><span>Green</span></button>
+            <button class="color-button active" data-color="mistyrose" style="--hover-color: mistyrose;">
+              <span>Pink</span>
+            </button>
+            <button class="color-button" data-color="black" style="--hover-color: black;">
+              <span>Black</span>
+            </button>
+            <button class="color-button" data-color="maroon" style="--hover-color: maroon;">
+              <span>Maroon</span>
+            </button>
+            <button class="color-button" data-color="midnightblue" style="--hover-color: midnightblue;">
+              <span>Blue</span>
+            </button>
+            <button class="color-button" data-color="dimgrey" style="--hover-color: dimgrey;">
+              <span>Grey</span>
+            </button>
+            <button class="color-button" data-color="darkseagreen" style="--hover-color: darkseagreen;">
+              <span>Green</span>
+            </button>
           </div>
         </div>
 
-        <!-- Buttons -->
+        <div class="layout-choices">
+          <h3>Layout Style</h3>
+          <div class="layout-options">
+            <button class="layout-button active" data-layout="grid">
+              <i class="fas fa-th"></i>
+              <span>Grid</span>
+            </button>
+            <button class="layout-button" data-layout="diamond">
+              <i class="fas fa-gem"></i>
+              <span>Diamond</span>
+            </button>
+            <button class="layout-button" data-layout="cross">
+              <i class="fas fa-plus"></i>
+              <span>Cross</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
         <div class="collage-buttons">
           <button id="take-new-pictures" class="styled-button">
-            Take New Pictures
+            <i class="fas fa-redo"></i>
+            New Photos
           </button>
-          <button id="download-collage" class="styled-button">
+          <button id="download-collage" class="styled-button primary">
+            <i class="fas fa-download"></i>
             Download
           </button>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div id="loading-overlay" class="loading-overlay" style="display: none;">
+    <div class="loading-spinner"></div>
+    <p>Processing your photos...</p>
+  </div>
+
+  <!-- Error Modal -->
+  <div id="error-modal" class="error-modal" style="display: none;">
+    <div class="error-content">
+      <i class="fas fa-exclamation-triangle"></i>
+      <h3>Oops! Something went wrong</h3>
+      <p id="error-message">Unable to access camera</p>
+      <button id="error-close" class="styled-button">Try Again</button>
     </div>
   </div>
 
