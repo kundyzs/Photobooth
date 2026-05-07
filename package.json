@@ -2,6 +2,7 @@
   "name": "my-v0-project",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "npm@10.9.0",
   "scripts": {
     "build": "next build",
     "dev": "next dev",
@@ -48,7 +49,7 @@
     "html2canvas": "latest",
     "input-otp": "1.4.1",
     "lucide-react": "^0.454.0",
-    "next": "15.2.4",
+    "next": "15.5.16",
     "next-themes": "latest",
     "react": "^18",
     "react-day-picker": "9.8.0",
@@ -67,7 +68,7 @@
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "postcss": "^8.5",
+    "postcss": "^8.5.10",
     "tailwindcss": "^4.1.9",
     "tw-animate-css": "1.3.3",
     "typescript": "^5"
