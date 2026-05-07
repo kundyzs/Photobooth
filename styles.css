@@ -148,6 +148,7 @@ body {
   box-shadow: var(--shadow-xl);
   width: 600px;
   max-width: 100%;
+  min-height: 500px;
 }
 
 .camera-header {
@@ -191,6 +192,7 @@ body {
   width: 100%;
   height: auto;
   max-height: 400px;
+  min-height: 300px;
   object-fit: cover;
 }
 
@@ -239,6 +241,8 @@ body {
   border-radius: 16px;
   box-shadow: var(--shadow-md);
   min-width: 200px;
+  max-width: 300px;
+  width: 100%;
 }
 
 .photo-gallery h4 {
@@ -378,6 +382,7 @@ body {
   transform: translateY(-2px);
 }
 
+/* Collage Preview Styles */
 .collage-preview {
   background: var(--bg-primary);
   padding: 30px;
@@ -394,6 +399,7 @@ body {
   padding: 20px;
   background: var(--bg-secondary);
   border-radius: 16px;
+  margin: 0 auto;
 }
 
 .preview-container .photo {
@@ -617,15 +623,27 @@ body {
   .camera-container {
     flex-direction: column;
     align-items: center;
+    gap: 20px;
   }
   
   .camera-box {
     width: 100%;
-    max-width: 500px;
+    max-width: 600px;
+    min-height: 450px;
+  }
+  
+  .photo-gallery {
+    max-width: 400px;
+    width: 100%;
+  }
+  
+  .taken-photos {
+    grid-template-columns: repeat(2, 1fr);
   }
   
   .preview-container {
     grid-template-columns: repeat(2, 1fr);
+    max-width: 600px;
   }
 }
 
@@ -672,6 +690,7 @@ body {
   .preview-container {
     grid-template-columns: 1fr;
     gap: 16px;
+    max-width: 400px;
   }
   
   .collage-buttons {
@@ -681,6 +700,14 @@ body {
   
   .color-options, .layout-options {
     grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .camera-box {
+    min-height: 400px;
+  }
+  
+  .photo-gallery {
+    max-width: 350px;
   }
 }
 
@@ -703,6 +730,7 @@ body {
   
   .camera-box {
     border-radius: 16px;
+    min-height: 350px;
   }
   
   .camera-header {
@@ -733,6 +761,65 @@ body {
   .styled-button {
     padding: 14px 24px;
     font-size: 12px;
+  }
+  
+  .photo-gallery {
+    max-width: 300px;
+  }
+  
+  .taken-photos img {
+    height: 60px;
+  }
+}
+
+/* iPad Specific Styles */
+@media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+  .camera-container {
+    flex-direction: row;
+    gap: 30px;
+  }
+  
+  .camera-box {
+    width: 60%;
+    max-width: 500px;
+  }
+  
+  .photo-gallery {
+    width: 35%;
+    max-width: 250px;
+  }
+  
+  .taken-photos {
+    grid-template-columns: 1fr;
+  }
+  
+  .taken-photos img {
+    height: 100px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) and (orientation: portrait) {
+  .camera-container {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .camera-box {
+    width: 100%;
+    max-width: 600px;
+  }
+  
+  .photo-gallery {
+    width: 100%;
+    max-width: 500px;
+  }
+  
+  .taken-photos {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  
+  .taken-photos img {
+    height: 80px;
   }
 }
 

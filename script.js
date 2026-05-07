@@ -56,18 +56,26 @@ const photoEffects = {
 
 // Layout configurations
 const layoutConfigs = {
+  vertical: {
+    gridTemplateColumns: '1fr',
+    gap: '15px',
+    maxWidth: '400px'
+  },
   grid: {
     gridTemplateColumns: 'repeat(2, 1fr)',
-    gap: '20px'
+    gap: '20px',
+    maxWidth: '800px'
   },
   diamond: {
     gridTemplateColumns: 'repeat(2, 1fr)',
     gap: '20px',
+    maxWidth: '800px',
     transform: 'rotate(45deg)'
   },
   cross: {
     gridTemplateColumns: 'repeat(3, 1fr)',
-    gap: '15px'
+    gap: '15px',
+    maxWidth: '800px'
   }
 };
 
@@ -75,6 +83,13 @@ const layoutConfigs = {
 function init() {
   setupEventListeners();
   checkCameraSupport();
+  
+  // Set default layout
+  currentLayout = 'vertical';
+  const defaultLayoutButton = document.querySelector('[data-layout="vertical"]');
+  if (defaultLayoutButton) {
+    defaultLayoutButton.classList.add('active');
+  }
 }
 
 // Setup all event listeners
@@ -344,6 +359,11 @@ function applyLayout() {
   const previewContainer = document.getElementById('preview');
   const layout = layoutConfigs[currentLayout];
   
+  // Reset any previous transforms
+  previewContainer.style.transform = '';
+  previewContainer.style.maxWidth = '';
+  
+  // Apply new layout
   Object.assign(previewContainer.style, layout);
   
   // Special handling for cross layout
@@ -353,6 +373,20 @@ function applyLayout() {
       photos[1].style.gridColumn = '2';
       photos[2].style.gridColumn = '2';
     }
+  }
+  
+  // Special handling for diamond layout
+  if (currentLayout === 'diamond') {
+    const photos = previewContainer.querySelectorAll('.photo-container');
+    photos.forEach(photo => {
+      photo.style.transform = 'rotate(-45deg)';
+    });
+  } else {
+    // Reset any diamond rotation
+    const photos = previewContainer.querySelectorAll('.photo-container');
+    photos.forEach(photo => {
+      photo.style.transform = '';
+    });
   }
 }
 
@@ -445,30 +479,196 @@ function downloadCollage() {
   
   showLoading('Creating your collage...');
   
-  // Use dom-to-image library
+  // Use dom-to-image library with iOS-optimized settings
   if (typeof domtoimage !== 'undefined') {
-    domtoimage.toPng(collagePreview, { 
-      quality: 0.95,
-      bgcolor: '#ffffff'
-    })
-    .then(function (dataUrl) {
+    // Detect iOS device
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    
+    const options = {
+      quality: 1.0, // Maximum quality for iOS
+      bgcolor: '#ffffff',
+      width: collagePreview.offsetWidth * 2, // Higher resolution
+      height: collagePreview.offsetHeight * 2,
+      style: {
+        'transform': 'scale(1)',
+        'transform-origin': 'top left'
+      }
+    };
+    
+    // Use different method for iOS
+    const exportMethod = isIOS ? domtoimage.toBlob : domtoimage.toPng;
+    
+    exportMethod(collagePreview, options)
+    .then(function (data) {
       hideLoading();
       
-      const link = document.createElement('a');
-      link.href = dataUrl;
-      link.download = `photobooth-collage-${Date.now()}.png`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      if (isIOS) {
+        // For iOS, create a blob URL and trigger download
+        const url = URL.createObjectURL(data);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `photobooth-collage-${Date.now()}.png`;
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Clean up blob URL
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      } else {
+        // For other devices, use data URL
+        const link = document.createElement('a');
+        link.href = data;
+        link.download = `photobooth-collage-${Date.now()}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
     })
     .catch(function (error) {
       hideLoading();
       console.error('Download error:', error);
-      showError('Failed to create collage');
+      
+      // Fallback for iOS issues - try canvas method
+      if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+        console.log('Trying fallback canvas method for iOS...');
+        downloadWithCanvas(collagePreview);
+      } else {
+        showError('Failed to create collage');
+      }
     });
   } else {
     hideLoading();
     showError('Download feature not available');
+  }
+}
+
+// Fallback download method using canvas for iOS
+function downloadWithCanvas(collagePreview) {
+  try {
+    // Create a canvas with the collage dimensions
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Set canvas size to match collage
+    canvas.width = collagePreview.offsetWidth * 2;
+    canvas.height = collagePreview.offsetHeight * 2;
+    
+    // Fill white background
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Get all photos from the collage
+    const photos = collagePreview.querySelectorAll('.photo');
+    
+    if (photos.length === 0) {
+      showError('No photos found in collage');
+      return;
+    }
+    
+    // Calculate layout based on current layout setting
+    let photoWidth, photoHeight, positions;
+    
+    if (currentLayout === 'vertical') {
+      photoWidth = canvas.width * 0.8;
+      photoHeight = photoWidth * 0.75;
+      const startX = (canvas.width - photoWidth) / 2;
+      const gap = 20;
+      
+      positions = photos.map((_, index) => ({
+        x: startX,
+        y: 20 + index * (photoHeight + gap)
+      }));
+    } else if (currentLayout === 'grid') {
+      photoWidth = (canvas.width - 60) / 2;
+      photoHeight = photoWidth * 0.75;
+      const startX = 20;
+      const startY = 20;
+      
+      positions = [
+        { x: startX, y: startY },
+        { x: startX + photoWidth + 20, y: startY },
+        { x: startX, y: startY + photoHeight + 20 },
+        { x: startX + photoWidth + 20, y: startY + photoHeight + 20 }
+      ];
+    } else {
+      // Default to grid for other layouts
+      photoWidth = (canvas.width - 60) / 2;
+      photoHeight = photoWidth * 0.75;
+      const startX = 20;
+      const startY = 20;
+      
+      positions = [
+        { x: startX, y: startY },
+        { x: startX + photoWidth + 20, y: startY },
+        { x: startX, y: startY + photoHeight + 20 },
+        { x: startX + photoWidth + 20, y: startY + photoHeight + 20 }
+      ];
+    }
+    
+    // Draw each photo on the canvas
+    let loadedPhotos = 0;
+    photos.forEach((photo, index) => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      
+      img.onload = function() {
+        const pos = positions[index];
+        
+        // Draw photo with border
+        ctx.fillStyle = currentBorderColor;
+        ctx.fillRect(pos.x - 8, pos.y - 8, photoWidth + 16, photoHeight + 16);
+        
+        // Draw the photo
+        ctx.drawImage(img, pos.x, pos.y, photoWidth, photoHeight);
+        
+        loadedPhotos++;
+        
+        // When all photos are loaded, download the canvas
+        if (loadedPhotos === photos.length) {
+          canvas.toBlob(function(blob) {
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `photobooth-collage-${Date.now()}.png`;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Clean up
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+            hideLoading();
+          }, 'image/png', 1.0);
+        }
+      };
+      
+      img.onerror = function() {
+        loadedPhotos++;
+        if (loadedPhotos === photos.length) {
+          showError('Failed to load photos for canvas export');
+          hideLoading();
+        }
+      };
+      
+      // Convert photo to data URL if needed
+      if (photo.src.startsWith('data:')) {
+        img.src = photo.src;
+      } else {
+        // Try to get the photo data
+        const tempCanvas = document.createElement('canvas');
+        const tempCtx = tempCanvas.getContext('2d');
+        tempCanvas.width = photo.naturalWidth || photo.width;
+        tempCanvas.height = photo.naturalHeight || photo.height;
+        tempCtx.drawImage(photo, 0, 0);
+        img.src = tempCanvas.toDataURL('image/png');
+      }
+    });
+    
+  } catch (error) {
+    console.error('Canvas fallback error:', error);
+    showError('Fallback download failed. Try taking a screenshot instead.');
+    hideLoading();
   }
 }
 
@@ -532,7 +732,7 @@ function resetState() {
   photosTaken = 0;
   currentFilter = 'none';
   currentEffect = 'none';
-  currentLayout = 'grid';
+  currentLayout = 'vertical'; // Changed default to vertical
   currentBorderColor = 'mistyrose';
   isCapturing = false;
   
@@ -552,7 +752,8 @@ function resetState() {
   colorButtons[0].classList.add('active');
   
   layoutButtons.forEach(btn => btn.classList.remove('active'));
-  layoutButtons[0].classList.add('active');
+  // Set vertical as default active
+  document.querySelector('[data-layout="vertical"]').classList.add('active');
   
   startCapturingButton.disabled = false;
   startCapturingButton.innerHTML = '<i class="fas fa-camera"></i> Start Capturing';

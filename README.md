@@ -1,20 +1,30 @@
-📸 PICZIZY
+# Pomodoro
 
-A simple and interactive web-based photobooth that lets users take pictures, apply borders, and download their photo strips.
+*Automatically synced with your [v0.app](https://v0.app) deployments*
 
-🚀 Features
-Capture photos using your webcam
+[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/dana-vercel-computing/v0-pomodoro-by-i-putu-dana-putra)
+[![Built with v0](https://img.shields.io/badge/Built%20with-v0.app-black?style=for-the-badge)](https://v0.app/chat/projects/RDMvzcXZFo4)
 
-Choose a border color (Pink, Black, Maroon)
+## Overview
 
-Download the photo strip
+This repository will stay in sync with your deployed chats on [v0.app](https://v0.app).
+Any changes you make to your deployed app will be automatically pushed to this repository from [v0.app](https://v0.app).
 
-Beautiful UI with gradient backgrounds and custom fonts
+## Deployment
 
-The website is deployed! Check it out!
-https://www.piczizy.com
+Your project is live at:
 
-📂 Project Structure
-index.html → Main UI
-style.css → Styling & animations
-script.js → Photobooth functionality
+**[https://vercel.com/dana-vercel-computing/v0-pomodoro-by-i-putu-dana-putra](https://vercel.com/dana-vercel-computing/v0-pomodoro-by-i-putu-dana-putra)**
+
+## Build your app
+
+Continue building your app on:
+
+**[https://v0.app/chat/projects/RDMvzcXZFo4](https://v0.app/chat/projects/RDMvzcXZFo4)**
+
+## How It Works
+
+1. Create and modify your project using [v0.app](https://v0.app)
+2. Deploy your chats from the v0 interface
+3. Changes are automatically pushed to this repository
+4. Vercel deploys the latest version from this repository
