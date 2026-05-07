@@ -1,4 +1,4 @@
-export type FilterType = "none" | "softFilm" | "flashVintage" | "disposableCamera"
+export type FilterType = "none" | "softFilm" | "flashVintage" | "disposableCamera" | "bwPhotobooth"
 
 export interface Filter {
   id: FilterType
@@ -51,6 +51,7 @@ export const filters: Filter[] = [
   { id: "softFilm", name: "Soft Film" },
   { id: "flashVintage", name: "Flash Vintage" },
   { id: "disposableCamera", name: "Disposable Camera" },
+  { id: "bwPhotobooth", name: "B&W Photobooth" },
 ]
 
 export function presetSliders(preset: FilterType): FilmSliders {
@@ -87,6 +88,18 @@ export function presetSliders(preset: FilterType): FilmSliders {
       flash: 0.18,
     }
   }
+  if (preset === "bwPhotobooth") {
+    // Sliders are still used for grain/softness/flash intensity, but color is forced to true B&W.
+    return {
+      intensity: 0.9,
+      grain: 0.22,
+      fade: 0.12,
+      warmth: 0.0,
+      softness: 0.2,
+      chroma: 0.0,
+      flash: 0.7,
+    }
+  }
   return { ...defaultFilmSliders, intensity: 0 }
 }
 
@@ -102,6 +115,123 @@ function rand2(x: number, y: number, seed: number) {
   // Fast deterministic hash noise in [0,1)
   const s = Math.sin(x * 12.9898 + y * 78.233 + seed * 37.719) * 43758.5453123
   return s - Math.floor(s)
+}
+
+function smoothstep(edge0: number, edge1: number, x: number) {
+  const t = clamp01((x - edge0) / (edge1 - edge0))
+  return t * t * (3 - 2 * t)
+}
+
+function applyBWPhotobooth(ctx: CanvasRenderingContext2D, w: number, h: number, sliders: FilmSliders, seed: number) {
+  const img = ctx.getImageData(0, 0, w, h)
+  const d = img.data
+
+  const intensity = clamp01(sliders.intensity)
+  if (intensity <= 0) return
+
+  const grain = clamp01(sliders.grain)
+  const fade = clamp01(sliders.fade)
+  const softness = clamp01(sliders.softness)
+  const flash = clamp01(sliders.flash)
+
+  // Per-frame variation (very small) for realism
+  const frameVar = (rand2(0.5, 0.5, seed) - 0.5) * 0.06
+  const expVar = 1 + frameVar // ~ +/-3%
+
+  // Strong but soft contrast (S-curve), deep blacks, clean highlights
+  const lift = 0.01 + fade * 0.05 // slightly lifted shadows, not muddy
+  const toe = 0.14
+  const shoulder = 0.14
+  const contrast = 1.22 // strong but not harsh
+  const gamma = 0.98
+
+  // Flash lift mostly affects highlights and upper mids
+  const flashLift = 0.06 + flash * 0.14
+  const flashHiBoost = 0.10 + flash * 0.22
+
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const i = (y * w + x) * 4
+      const r = d[i] / 255
+      const g = d[i + 1] / 255
+      const b = d[i + 2] / 255
+
+      // Realistic luminance weights (Rec.709-ish)
+      let l = 0.2126 * r + 0.7152 * g + 0.0722 * b
+
+      // exposure variation
+      l = clamp01(l * expVar)
+
+      // lift blacks slightly
+      l = l * (1 - lift) + lift
+
+      // gentle S-curve contrast
+      l = Math.pow(clamp01(l), gamma)
+      l = (l - 0.5) * contrast + 0.5
+
+      // toe/shoulder rolloff for “film paper” feel
+      if (l < toe) {
+        const t = l / toe
+        l = toe * (t * t) // smooth toe
+      } else if (l > 1 - shoulder) {
+        const t = (l - (1 - shoulder)) / shoulder
+        l = (1 - shoulder) + shoulder * (1 - Math.pow(1 - clamp01(t), 1.6))
+      }
+
+      // Flash simulation: brighten upper mids + highlights, keep smooth transitions
+      const hi = smoothstep(0.55, 0.92, l)
+      const mid = smoothstep(0.25, 0.65, l) * (1 - hi * 0.4)
+      l = clamp01(l + flashLift * mid + flashHiBoost * hi)
+
+      // Monochrome grain (subtle)
+      if (grain > 0) {
+        const n = rand2(x, y, seed)
+        const n2 = rand2(x + 19.1, y + 7.7, seed + 3.3)
+        // Grain stronger in mids than highlights (like scanned prints)
+        const grainMask = 0.35 + 0.65 * (1 - Math.abs(l - 0.5) * 2)
+        const gn = (n - 0.5) * 0.09 * grain * grainMask
+        const gn2 = (n2 - 0.5) * 0.03 * grain * grainMask
+        l = clamp01(l + gn + gn2)
+      }
+
+      // Subtle vignette is OK, keep it light
+      const nx = (x + 0.5) / w
+      const ny = (y + 0.5) / h
+      const dx = nx - 0.5
+      const dy = ny - 0.5
+      const dist = Math.sqrt(dx * dx + dy * dy)
+      const vig = 1 - smoothstep(0.55, 0.95, dist) * 0.10
+      l = clamp01(l * vig)
+
+      // Mix with original (but still force B&W)
+      const origL = clamp01(0.2126 * r + 0.7152 * g + 0.0722 * b)
+      const out = clamp01(lerp(origL, l, intensity))
+
+      const v = Math.round(out * 255)
+      d[i] = v
+      d[i + 1] = v
+      d[i + 2] = v
+    }
+  }
+
+  ctx.putImageData(img, 0, 0)
+
+  // Analog softness (small blur blended back)
+  if (softness > 0) {
+    const blurPx = lerp(0.2, 1.1, softness)
+    const off = document.createElement("canvas")
+    off.width = w
+    off.height = h
+    const octx = off.getContext("2d")
+    if (octx) {
+      octx.drawImage(ctx.canvas, 0, 0)
+      ctx.save()
+      ;(ctx as any).filter = `blur(${blurPx}px)`
+      ctx.globalAlpha = lerp(0.06, 0.24, softness)
+      ctx.drawImage(off, 0, 0)
+      ctx.restore()
+    }
+  }
 }
 
 function applyFilmPipeline(ctx: CanvasRenderingContext2D, w: number, h: number, sliders: FilmSliders, seed: number) {
@@ -282,7 +412,11 @@ export function applyFilter(
   if (filterType !== "none") {
     const seed = Date.now() % 1000000
     const effective = sliders ?? presetSliders(filterType)
-    applyFilmPipeline(ctx, width, height, effective, seed)
+    if (filterType === "bwPhotobooth") {
+      applyBWPhotobooth(ctx, width, height, effective, seed)
+    } else {
+      applyFilmPipeline(ctx, width, height, effective, seed)
+    }
   }
 
   return canvas.toDataURL("image/png")
