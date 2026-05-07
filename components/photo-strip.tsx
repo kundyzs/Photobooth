@@ -64,17 +64,24 @@ export function PhotoStrip({ photos, onDownload, variant = "ui" }: PhotoStripPro
         ref={stripRef}
         className={
           variant === "ui"
-            ? "relative bg-[oklch(0.95_0.02_85)] text-[oklch(0.16_0.02_85)] rounded-md px-4 py-4 shadow-[0_18px_40px_rgba(0,0,0,0.35)] border border-[oklch(0.82_0.02_85)]"
+            ? "relative bg-[oklch(0.95_0.02_85)] text-[oklch(0.16_0.02_85)] rounded-md px-3 py-3 shadow-[0_18px_40px_rgba(0,0,0,0.35)] border border-[oklch(0.82_0.02_85)]"
             : undefined
         }
         style={variant === "export" ? exportStyles!.wrapper : undefined}
       >
         {/* Paper strip body */}
-        <div className={variant === "ui" ? "flex flex-col gap-3" : undefined} style={variant === "export" ? exportStyles!.stack : undefined}>
+        <div
+          className={variant === "ui" ? "flex flex-col gap-2" : undefined}
+          style={variant === "export" ? exportStyles!.stack : undefined}
+        >
           {photos.map((photo, index) => (
             <div
               key={photo.id}
-              className={variant === "ui" ? "relative overflow-hidden rounded-sm border border-black/20 bg-black aspect-[3/4]" : undefined}
+              className={
+                variant === "ui"
+                  ? "relative overflow-hidden rounded-[2px] border border-black/30 bg-black aspect-[3/4]"
+                  : undefined
+              }
               style={variant === "export" ? exportStyles!.frame : undefined}
             >
               <img

@@ -64,7 +64,8 @@ export default function PhotoboothApp() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-6">
           <div className="lg:col-span-3 pb-panel">
             <div className="pb-panel-inner">
-            <div className="aspect-video mb-6">
+            {/* Bigger preview on phones: square; widescreen on md+ */}
+            <div className="aspect-square md:aspect-video mb-6">
               <CameraView
                 selectedFilter={selectedFilter}
                 filmSliders={filmSliders}

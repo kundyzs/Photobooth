@@ -15,8 +15,11 @@ export default function ResultsPage() {
   const router = useRouter()
   const [photos, setPhotos] = useState<Photo[]>([])
   const [showStrip, setShowStrip] = useState(false)
+  const [printed, setPrinted] = useState(false)
+  const [fitScale, setFitScale] = useState(1)
   const stripRef = useRef<HTMLDivElement>(null)
   const exportRef = useRef<HTMLDivElement>(null)
+  const slotRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     // read photos captured in this session from sessionStorage
@@ -41,6 +44,42 @@ export default function ResultsPage() {
       router.push("/")
     }
   }, [router])
+
+  useEffect(() => {
+    if (!showStrip) return
+    setPrinted(false)
+    // printDown animation is 2.4s + 220ms delay
+    const t = setTimeout(() => setPrinted(true), 2800)
+    return () => clearTimeout(t)
+  }, [showStrip])
+
+  useEffect(() => {
+    if (!showStrip) return
+
+    const slotEl = slotRef.current
+    const stripEl = stripRef.current
+    if (!slotEl || !stripEl) return
+
+    const computeScale = () => {
+      const slotH = slotEl.clientHeight
+      const slotW = slotEl.clientWidth
+      const stripH = stripEl.scrollHeight
+      const stripW = stripEl.scrollWidth
+      if (slotH <= 0 || slotW <= 0 || stripH <= 0 || stripW <= 0) return
+
+      // Fit vertically with a little breathing room, also respect width.
+      const vertical = (slotH - 24) / stripH
+      const horizontal = (slotW - 24) / stripW
+      const s = Math.min(1, vertical, horizontal)
+      setFitScale(Number.isFinite(s) ? Math.max(0.25, s) : 1)
+    }
+
+    computeScale()
+    const ro = new ResizeObserver(() => computeScale())
+    ro.observe(slotEl)
+    ro.observe(stripEl)
+    return () => ro.disconnect()
+  }, [showStrip, photos.length])
 
   const waitForImages = async (root: HTMLElement, timeoutMs = 4000) => {
     const imgs = Array.from(root.querySelectorAll("img"))
@@ -251,10 +290,15 @@ export default function ResultsPage() {
             <div className="pb-panel-inner">
               <div className="pb-slot-frame">
                 <div className="pb-slot-top" />
-                <div className="pb-slot-window" aria-label="Photo slot window">
+                <div ref={slotRef} className="pb-slot-window" aria-label="Photo slot window">
                   <div
-                    className={`pb-strip-motion ${showStrip ? "is-printing" : ""}`}
-                    style={{ "--printDelay": "220ms" } as any}
+                    className={`pb-strip-motion ${showStrip ? "is-printing" : ""} ${printed ? "is-printed" : ""}`}
+                    style={
+                      {
+                        "--printDelay": "220ms",
+                        "--fitScale": String(fitScale),
+                      } as any
+                    }
                   >
                     <div ref={stripRef}>
                       <PhotoStrip photos={photos} onDownload={downloadPhotoStrip} />
@@ -265,7 +309,7 @@ export default function ResultsPage() {
               </div>
 
               <div className="mt-4 text-center text-[11px] text-muted-foreground">
-                If you’re on mobile, scroll a little to see the full strip.
+                {printed ? "Your strip is ready." : "Printing..."}
               </div>
             </div>
           </div>
@@ -331,18 +375,25 @@ export default function ResultsPage() {
           animation: printDown 2.4s cubic-bezier(0.16, 0.9, 0.18, 1) var(--printDelay, 0ms) forwards;
         }
 
+        .pb-strip-motion.is-printed {
+          transform: translate(-50%, 0%) scale(var(--fitScale, 1));
+          transform-origin: top center;
+          will-change: auto;
+          margin-top: 12px;
+        }
+
         @keyframes printDown {
           0% {
-            transform: translate(-50%, -110%);
+            transform: translate(-50%, -110%) scale(var(--fitScale, 1));
           }
           72% {
-            transform: translate(-50%, -8%);
+            transform: translate(-50%, -8%) scale(var(--fitScale, 1));
           }
           84% {
-            transform: translate(-50%, -12%);
+            transform: translate(-50%, -12%) scale(var(--fitScale, 1));
           }
           100% {
-            transform: translate(-50%, 0%);
+            transform: translate(-50%, 0%) scale(var(--fitScale, 1));
           }
         }
 
